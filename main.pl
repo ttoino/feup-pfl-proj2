@@ -1,7 +1,11 @@
-:- use_module(library(random)).
+:- use_module(library(between)).
 :- use_module(library(lists)).
-:- consult(display).
-:- consult(lists).
+:- use_module(library(random)).
+
+:- consult('src/board').
+:- consult('src/io').
+:- consult('src/menu').
+:- consult('src/utils').
 
 fill_line(0, []) :- !.
 fill_line(N, [empty | Rest]) :-
@@ -18,7 +22,12 @@ initial_state(GameState-Player) :-
     random_member(Player, [human, computer-1, computer-2]),
     fill_board(9, GameState).
 
-play_game :-
+/**
+ * play/0
+ * 
+ * Start the game in the main menu.
+ */
+play :-
     initial_state(GameState-Player),
     display_game(GameState-Player),
     game_cycle(GameState-Player).
