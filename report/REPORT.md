@@ -36,7 +36,7 @@ On the square board, pieces see in all 8 directions.
 The internal representation of the game's state is a compound term that includes:
 - the board (a square matrix of side N, with N being an odd integer between 5 and 15), whose elements are atoms that are either `white`, `black` or `empty`;
 - the current player (an atom whose value is either `white` or `black`);
-- the types of both players (`human`, `easy`, `hard`, with the last two being for the computer AIs);
+- the types of both players (`human`, `easy`, `medium`, `hard`, with the last three being for the computer AIs);
 
 Initial State:
 ```
@@ -80,7 +80,7 @@ The predicates for the game's menu and visualization are located in the `menu` a
 
 - `menu` is responsible for showing the initial, instructions and game setup menus to the user. It does so using the `menu/2` predicate. The initial menu and the instructions menu make use of `write_framed/1` predicate defined in the `io` module. All input is correctly validated;
 - `board` contains predicates responsible for taking the game's board and printing it formatted line by line. This is mainly handled by the `show_lines/3` predicate.
-- The game has a flexible NxN board, which must be an odd number between 5 and 15 The initial game state can be obtained with the predicate `initialState/2`. The first player is always `white`.
+- The game has a flexible NxN board, which must be an odd number between 5 and 15. The initial game state can be obtained with the predicate `initialState/2`. The first player is always `white`.
 
 > Note: due to the way we store the game's state, there is no player variable in the game's predicates. Instead the player is obtained from the game's state.
 
@@ -92,13 +92,17 @@ It is responsible for validating the current move according to the game's rule s
 
 ### List of valid moves
 
-Obtaining a list of valid moves is done using the `valid_moves/2` predicate, which basically tries every move possible and if it is valid adds it to the resulting list.
+Obtaining a list of valid moves is done using the `valid_moves/2` predicate, which tries every move possible and if it is valid adds it to the resulting list. It does so using Prolog's builtin `findall/3`.
 
 ### End of Game
 
 The verification of the game's termination is done by means of the `game_cycle/1` predicate, which has, in order, definitions for a win, a tie, and a "normal" situation (one where the game can still continue).
 
-First we check if the game was a win for someone, using the `game_over/2` predicate, which checks, in the context of our game, if the position in the middle of the board has a piece in it, and returning the winner in the process (in case it wasn't instantiated). If this check fails, it means that the game either ended in a tie or didn't end at all. In case it was a tie, the `tie/1` predicate is called: if it succeeds, a message indicating that the game result was a tie is shown and, after user input, the game exits.
+First we check if the game was a win for someone, using the `game_over/2` predicate, which checks, in the context of our game, if the position in the middle of the board has a piece in it, and returns the winner in the process (in case it wasn't instantiated).
+
+If this check fails, we then check if the game ended in a tie, using the `tie/1` predicate: if it succeeds, a message indicating that the game result was a tie is shown and, after user input, the game exits.
+
+If none of the aforementioned checks succeed, it means that the game did not end, and so the game loop continues normally.
 
 ### Board Evaluation
 
@@ -123,7 +127,7 @@ The board game Center was successfully implemented in the SicStus Prolog 4.7 lan
 
 One of the main difficulties in the development of this project was the fact that Prolog as a language only supports source code files encoded in UTF-16, which lead to weird errors when writing the code initially.
 
-Another limitation of our implementation of the game is the computer move selection algorithm: we implemented the naïve approach of the *minmax* algorithm, which on large boards can be slow to compute the computer's next move. We tried to implement [*alpha-beta pruning*](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning) as an optimization to this algorithm but due to the nature of Prolog this was proving to be quite difficult and was note done.
+Another limitation of our implementation of the game is the computer move selection algorithm: we implemented the naïve approach of the *minmax* algorithm, which on large boards can be slow to compute the computer's next move. We tried to implement [*alpha-beta pruning*](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning) as an optimization to this algorithm but due to the nature of Prolog this was proving to be quite difficult and was not done.
 
 ## Bibliography
 - https://boardgamegeek.com/boardgame/360905/center
